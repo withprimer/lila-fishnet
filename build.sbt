@@ -1,6 +1,6 @@
 name := "lila-fishnet"
 
-version := "2.0"
+version := "3.0"
 
 maintainer := "lichess.org"
 
@@ -8,57 +8,33 @@ lazy val root = Project("lila-fishnet", file("."))
   .enablePlugins(PlayScala, PlayNettyServer)
   .disablePlugins(PlayAkkaHttpServer)
 
-scalaVersion := "2.13.8"
+scalaVersion := "3.1.2"
 resourceDirectory in Compile := baseDirectory.value / "conf"
 
-val kamonVersion = "2.5.0"
+val kamonVersion = "2.5.1"
+val nettyVersion = "4.1.76.Final"
 
 libraryDependencies += "io.lettuce"   % "lettuce-core"                 % "6.1.8.RELEASE"
-libraryDependencies += "io.netty"     % "netty-transport-native-epoll" % "4.1.75.Final" classifier "linux-x86_64"
+libraryDependencies += "io.netty"     % "netty-transport-native-epoll" % nettyVersion classifier "linux-x86_64"
 libraryDependencies += "joda-time"    % "joda-time"                    % "2.10.14"
-libraryDependencies += "org.lichess" %% "scalachess"                   % "10.4.5"
+libraryDependencies += "org.lichess" %% "scalachess"                   % "11.0.1"
 libraryDependencies += "io.kamon"    %% "kamon-core"                   % kamonVersion
 libraryDependencies += "io.kamon"    %% "kamon-influxdb"               % kamonVersion
 libraryDependencies += "io.kamon"    %% "kamon-system-metrics"         % kamonVersion
 
 resolvers += "lila-maven" at "https://raw.githubusercontent.com/ornicar/lila-maven/master"
 
-scalacOptions ++= Seq(
+scalacOptions := Seq(
+  "-encoding",
+  "utf-8",
+  "-rewrite",
+  "-source:future-migration",
+  "-indent",
   "-explaintypes",
   "-feature",
-  "-language:higherKinds",
-  "-language:implicitConversions",
-  "-language:postfixOps",
-  "-Ymacro-annotations",
+  "-language:postfixOps"
   // Warnings as errors!
   // "-Xfatal-warnings",
-  // Linting options
-  "-unchecked",
-  "-Xcheckinit",
-  "-Xlint:adapted-args",
-  "-Xlint:constant",
-  "-Xlint:delayedinit-select",
-  "-Xlint:deprecation",
-  "-Xlint:inaccessible",
-  "-Xlint:infer-any",
-  "-Xlint:missing-interpolator",
-  "-Xlint:nullary-unit",
-  "-Xlint:option-implicit",
-  "-Xlint:package-object-classes",
-  "-Xlint:poly-implicit-overload",
-  "-Xlint:private-shadow",
-  "-Xlint:stars-align",
-  "-Xlint:type-parameter-shadow",
-  "-Wdead-code",
-  "-Wextra-implicit",
-  "-Wnumeric-widen",
-  "-Wunused:imports",
-  "-Wunused:locals",
-  "-Wunused:patvars",
-  "-Wunused:privates",
-  "-Wunused:implicits",
-  "-Wunused:params"
-  /* "-Wvalue-discard" */
 )
 
 javaOptions ++= Seq("-Xms64m", "-Xmx128m")
