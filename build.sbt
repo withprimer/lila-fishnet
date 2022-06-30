@@ -1,6 +1,8 @@
 import com.typesafe.sbt.packager.docker._
 import com.typesafe.sbt.packager.docker.DockerChmodType
 
+import NativePackagerHelper._
+
 name := "lila-fishnet"
 
 version := "2.0"
@@ -95,4 +97,4 @@ dockerCommands := dockerCommands.value.filterNot {
 }
 
 dockerCommands += Cmd("RUN","mkdir /opt/docker/logs")
-dockerCommands += Cmd("ENTRYPOINT", "/opt/docker/bin/lila-fishnet -Dconfig.file=prod.conf")
+dockerCommands += Cmd("ENTRYPOINT", "/opt/docker/bin/lila-fishnet -Dconfig.file=conf/prod.conf")
