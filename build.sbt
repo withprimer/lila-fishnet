@@ -77,23 +77,23 @@ publishArtifact in (Compile, packageDoc) := false
 
 
 // docker
-dockerBaseImage := "openjdk:11-jdk"
+dockerBaseImage := "openjdk:11-jre-slim-buster"
 dockerExposedPorts += 9665
-dockerPermissionStrategy := DockerPermissionStrategy.None
-dockerChmodType := DockerChmodType.UserGroupWriteExecute
-dockerAdditionalPermissions += (DockerChmodType.UserGroupWriteExecute, "/opt/docker/")
-daemonUserUid in Docker := None
-daemonUser in Docker    := "root"
+Docker / daemonUserUid := None
+Docker / daemonUser := "root"
+
+//for m1, instruct to build amd64 package
+dockerBuildCommand := {
+   if (sys.props("os.arch") != "amd64") {
+     dockerExecCommand.value ++ Seq("buildx", "build", "--platform=linux/amd64", "--load") ++ dockerBuildOptions.value :+ "."
+   } else dockerBuildCommand.value
+ }
 
 
 dockerCommands := dockerCommands.value.filterNot {
-
-  // ExecCmd is a case class, and args is a varargs variable, so you need to bind it with @
   case ExecCmd("ENTRYPOINT", args @ _*) => true
   case ExecCmd("CMD",args @ _*) => true
-
-  // don't filter the rest; don't filter out anything that doesn't match a pattern
-  case cmd                       => false
+  case cmd  => false
 }
 
 dockerCommands += Cmd("RUN","mkdir /opt/docker/logs")
